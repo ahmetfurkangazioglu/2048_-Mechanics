@@ -9,7 +9,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject[] Balls;
     [SerializeField] GameObject BallShotPlatform;
     [SerializeField] GameObject BallShotPoint;
-    int CurrentBall;
+    [SerializeField] GameObject NextBallPoint;
+    [SerializeField] ParticleSystem BombEffect;
+    [SerializeField] ParticleSystem[] BoxEffects;
+
+    int CurrentEffect;
+    int CurrentBallIndex;
+    GameObject CurrentBall;
 
     private void Start()
     {
@@ -32,12 +38,56 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+        if (Input.GetMouseButtonUp(0))
+        {
+            CurrentBall.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+            CurrentBall.gameObject.transform.SetParent(null);
+            CurrentBall.GetComponent<Ball>().StartInvok();
+            if (CurrentBallIndex != Balls.Length)
+            {
+                BallOperation(); 
+                if (CurrentBallIndex!=Balls.Length)
+                {
+                    NextBall();
+                }
+            }
+            else
+            {
+                Debug.Log("wait, lose, ");
+            }
+        }
     }
 
+    public void ExplosionEffect(Vector2 pos)
+    {
+        BombEffect.gameObject.transform.position = pos;
+        BombEffect.gameObject.SetActive(true);
+    }
+    public void BoxExplosion(Vector2 pos)
+    {
+        BoxEffects[CurrentEffect].gameObject.transform.position = pos;
+        BoxEffects[CurrentEffect].gameObject.SetActive(true);
+        if (CurrentEffect != BoxEffects.Length - 1)
+            CurrentEffect++;
+        else
+            CurrentEffect = 0;
+    }
     void SetBall()
     {
-        Balls[CurrentBall].gameObject.transform.SetParent(BallShotPlatform.transform);
-        Balls[CurrentBall].transform.position = BallShotPoint.transform.position;
-        Balls[CurrentBall].SetActive(true);
+        BallOperation();
+        NextBall();
+    }
+    void BallOperation()
+    {
+        Balls[CurrentBallIndex].gameObject.transform.SetParent(BallShotPlatform.transform);
+        Balls[CurrentBallIndex].transform.position = BallShotPoint.transform.position;
+        Balls[CurrentBallIndex].SetActive(true);
+        CurrentBall = Balls[CurrentBallIndex];
+        CurrentBallIndex++;
+    }
+    void NextBall()
+    {
+        Balls[CurrentBallIndex].transform.position = NextBallPoint.transform.position;
+        Balls[CurrentBallIndex].SetActive(true);
     }
 }

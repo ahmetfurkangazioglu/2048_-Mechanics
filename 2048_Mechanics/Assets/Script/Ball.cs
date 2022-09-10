@@ -17,7 +17,7 @@ public class Ball : MonoBehaviour
         CurrentValueText.text = CurrentValue.ToString();
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag(CurrentValue.ToString()) && Operation)
         {
@@ -32,14 +32,15 @@ public class Ball : MonoBehaviour
         }
     }
 
+    public void StartInvok()
+    {
+        Invoke("ChangeOperationOrder", 1f);
+    }
     void ChangeOperationOrder()
     {
         Operation = true;
     }
-    void StartInvok()
-    {
-        Invoke("ChangeOperationOrder", 2f);
-    }
+   
     void SpriteControl(int Value)
     {
         switch (Value)
