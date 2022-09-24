@@ -21,26 +21,37 @@ public class Ball : MonoBehaviour
     {
         if (collision.gameObject.CompareTag(CurrentValue.ToString()) && Operation)
         {
-            collision.gameObject.SetActive(false);
-            MergingEffect.gameObject.SetActive(true);
-            CurrentValue *= 2;
-            CurrentValueText.text = CurrentValue.ToString();
-            SpriteControl(CurrentValue);
-            gameObject.tag = CurrentValue.ToString();
-            Operation = false;
-            StartInvok();
+            BallOperation(collision);
         }
     }
-
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag(CurrentValue.ToString()) && Operation)
+        {
+            BallOperation(collision);
+        }
+    }
     public void StartInvok()
     {
         Invoke("ChangeOperationOrder", 1f);
     }
+    void BallOperation(Collision2D collision)
+    {      
+        collision.gameObject.SetActive(false);
+        SoundManager.Instance.AllSounds[5].Play();
+        MergingEffect.gameObject.SetActive(true);
+        CurrentValue *= 2;
+        CurrentValueText.text = CurrentValue.ToString();
+        SpriteControl(CurrentValue);
+        gameObject.tag = CurrentValue.ToString();
+        Operation = false;
+        StartInvok();
+        manager.BallMissionOperation(CurrentValue);
+    }
     void ChangeOperationOrder()
     {
         Operation = true;
-    }
-   
+    } 
     void SpriteControl(int Value)
     {
         switch (Value)
